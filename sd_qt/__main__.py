@@ -25,8 +25,8 @@ except WindowsError as e:
 
 with open(lockfile, 'wb') as lockfileobj:
     # run your app's main here
-    package_name = "Sundial"  # You can change this to any package name
-    reset_on_reinstall = True  # Set to True to reset on reinstall
-    handle_first_run(package_name, reset_on_reinstall)
+    # package_name = "Sundial"  # You can change this to any package name
+    # reset_on_reinstall = True  # Set to True to reset on reinstall
+    # handle_first_run(package_name, reset_on_reinstall)
     main()
 os.unlink(lockfile)

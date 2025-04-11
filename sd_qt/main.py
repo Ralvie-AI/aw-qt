@@ -43,6 +43,7 @@ def main() -> None:
         manager = Manager()
         
         manager.autostart(["sd-server"])
+        sleep(3)
         run_application()
 
         if sys.platform == "win32":

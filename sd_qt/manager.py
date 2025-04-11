@@ -309,23 +309,29 @@ class Module:
         with open(self.config_file_path, 'w') as configfile:
             config.write(configfile)
 
-    def _is_process_running(self, pid: int) -> bool:
+    def _is_process_running(self, pid: int, process_name: str) -> bool:
         """
-         Check if a process is running. This is a wrapper around psutil. Process. is_running ()
-         
-         @param pid - Process ID to check.
-         
-         @return True if process is running False otherwise. Note that None is considered to be a process
+        Check if a process with the given pid and process_name is running.
+        
+        @param pid - Process ID to check.
+        @param process_name - Process name to match.
+        
+        @return True if process is running and the name matches, False otherwise.
         """
-        # Returns true if pid is None or 0
+        # Returns false if pid is None or invalid
         if pid is None or pid <= 0:
             return False
 
         try:
             process = psutil.Process(pid)
-            return process.is_running()
+            print("process_name",process.name())
+            if process.is_running() and process.name() == process_name : # 
+                return True
+            else:
+                return False
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             return False
+
 
     def start(self):
         """
@@ -336,7 +342,7 @@ class Module:
         """
         pid = self._read_pid()
         # Check if process is running
-        if pid and self._is_process_running(pid):
+        if pid and self._is_process_running(pid, process_name = self.name):
             logger.info(f"{self.name} is already running")
             return
         exec_cmd = [str(self.path)]
@@ -365,7 +371,7 @@ class Module:
         pid = self._read_pid()
         print(pid)
         # Stop the process and update the status to False
-        if pid and self._is_process_running(pid):
+        if pid and self._is_process_running(pid, process_name = self.name):
             try:
                 process = psutil.Process(pid)
                 process.terminate()  # or process.kill() if terminate does not work
