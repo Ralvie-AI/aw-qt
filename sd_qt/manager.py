@@ -61,6 +61,14 @@ def filter_modules(modules: Iterable["Module"]) -> Set["Module"]:
     # Like sd-qt itself, or sd-cli
     return {m for m in modules if m.name not in ignored_filenames}
 
+def is_valid_ini(filepath):
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+            return content.strip().startswith('[')
+    except Exception as e:
+        print(f"Failed to read INI file: {e}")
+        return False
 
 def initialize_ini_file():
     """
@@ -69,7 +77,12 @@ def initialize_ini_file():
     """
     Initialize the INI file with default values if it doesn't exist.
     """
+    if os.path.exists(config_file_path) and not is_valid_ini(config_file_path):
+        print(f"File {config_file_path} was corrupted.")
+        os.remove(config_file_path)
+         
     # Initialize the INI file with default values.
+
     if not os.path.exists(config_file_path):
         config = configparser.ConfigParser()
         # Adding sections and default values for each module
