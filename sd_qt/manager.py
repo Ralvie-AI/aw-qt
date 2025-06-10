@@ -333,11 +333,42 @@ class Module:
          
          @return True if the process was
         """
+        pid = self._read_pid()
+        # Check if process is running
+        if pid and self._is_process_running(pid):
+            logger.info(f"{self.name} is already running")
+            return
+        exec_cmd = [str(self.path)]
+        self.started = True
+        logger.info(f"Starting {self.name}")
+        startupinfo = None
+        # This function is called by the main bundle when the OS is running on the OS X.
+        if sys.platform == "win32" or sys.platform == "cygwin":
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        elif sys.platform == "darwin":
+            logger.info("macOS: Disable dock icon")
+            import AppKit
+            AppKit.NSBundle.mainBundle().infoDictionary()["LSBackgroundOnly"] = "1"
+
+        self._process = subprocess.Popen(
+            exec_cmd, universal_newlines=True, startupinfo=startupinfo
+        )
+        self._write_pid(self._process.pid)
+        self._update_status_in_ini(True)
+
+    def start_old(self):
+        """
+         Start the process if it isn't already running. This is a blocking call
+         
+         
+         @return True if the process was
+        """
         # Check if idle_time set False and no need to start sd-watcher-afk module.
         # if self.name == "sd-watcher-afk" and self.settings and self.settings.get("idle_time") == False:
-        if self.name == "sd-watcher-afk":
-            logger.info(f"{self.name} is no need to run.")
-            return None
+        # if self.name == "sd-watcher-afk":
+        #     logger.info(f"{self.name} is no need to run.")
+        #     return None
 
         pid = self._read_pid()
         # Check if process is running
