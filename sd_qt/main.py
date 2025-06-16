@@ -13,6 +13,7 @@ from sd_qt.keychain_script import clear_keys
 from sd_qt.manager import Manager
 from .config import AwQtSettings
 from .sd_desktop.main import run_application
+from sd_qt.sd_desktop.monitor import start_exe
 
 logger = logging.getLogger(__name__)
 
@@ -37,12 +38,10 @@ def main() -> None:
                 logger.warning("Permission denied when trying to set process group")
 
         clear_keys()
+        logger.info("before main starting sd-server")
+        start_exe("sd-server")
+        logger.info("after main starting sd-server")
 
-        config = AwQtSettings()
-
-        manager = Manager()
-        
-        manager.autostart(["sd-server"])
         run_application()
 
         if sys.platform == "win32":
