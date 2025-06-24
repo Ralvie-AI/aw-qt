@@ -13,18 +13,44 @@ from sd_qt.keychain_script import clear_keys
 from sd_qt.manager import Manager
 from .config import AwQtSettings
 from .sd_desktop.main import run_application
+from sd_qt.sd_desktop.util import (get_window_version, is_windows)
 
 logger = logging.getLogger(__name__)
+
+
+def get_running_path():
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    else:
+        return os.path.dirname(os.path.abspath(__file__))
 
 def main() -> None:
     """
     The main function of the application.
     """
     try:
+        
+        setup_logging("sd-qt", log_file=True)
+
+        if is_windows():
+            # if get_window_version() == 10:
+            #     os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-webgl'
+
+            if getattr(sys, 'frozen', False):
+                logger.info(f"running path {get_running_path()}")
+                frozen_path = os.path.join(get_running_path(), "PySide6")
+                logger.info(f"running path of QtWebEngineProcess {frozen_path}")
+                os.environ['QTWEBENGINEPROCESS_PATH'] = os.path.join(frozen_path, "QtWebEngineProcess.exe")    
+                os.environ['QTWEBENGINE_RESOURCES_PATH'] = os.path.join(frozen_path, "resources")  
+
+            os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-webgl'
+
+            logger.info(f"env => {os.environ}")
+
         if platform.system() == "Darwin":
             subprocess.call("syslog -s 'sd-qt started'", shell=True)
 
-        setup_logging("sd-qt", log_file=True)
+        
         logger.info("Started sd-qt...")
 
         if platform.system() == "Darwin":
