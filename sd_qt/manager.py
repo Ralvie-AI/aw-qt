@@ -17,6 +17,10 @@ import sd_core
                                    
 logger = logging.getLogger(__name__)
 
+ignored_filenames = ["sd-cli", "sd-client", "sd-qt", "sd-qt.desktop", "sd-qt.spec", "sd-main"]
+auto_start_modules = ["sd-server"]
+settings_cache_key = "settings_cache"
+
 # The path of sd_qt
 if getattr(sys, 'frozen', False):
     # Running as a PyInstaller bundle
@@ -43,11 +47,6 @@ def _log_modules(modules: List["Module"]) -> None:
     # Debugging of all modules in the module list
     for m in modules:
         logger.debug(f" - {m.name} at {m.path}")
-
-
-ignored_filenames = ["sd-cli", "sd-client", "sd-qt", "sd-qt.desktop", "sd-qt.spec"]
-auto_start_modules = ["sd-server"]
-settings_cache_key = "settings_cache"
 
 def filter_modules(modules: Iterable["Module"]) -> Set["Module"]:
     """
