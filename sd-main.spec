@@ -16,11 +16,11 @@ icon = 'media/logo/logo.ico'
 block_cipher = None
 
 
-a = Analysis(['sd_qt/__main__.py'],
+a = Analysis(['sd_main/__main__.py'],
              pathex=[] + extra_pathex,
              binaries=None,
-             datas=[('resources/sd-qt.desktop', '.'), ('media', 'media'),("sd_qt/sd_desktop/resources",'sd_desktop/resources'),
-             ("sd_qt/sd_desktop/locales",'sd_desktop/locales')
+             datas=[('resources/sd-main.desktop', '.'), ('media', 'media'),("sd_main/sd_desktop/resources",'sd_desktop/resources'),
+             ("sd_main/sd_desktop/locales",'sd_desktop/locales')
              ],
              hiddenimports=[],
              hookspath=[],
@@ -39,7 +39,7 @@ pyz = PYZ(a.pure, a.zipped_data,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='sd-qt',
+          name='sd-main',
           debug=False,
           strip=False,
           upx=True,
@@ -51,7 +51,7 @@ coll = COLLECT(exe,
                a.datas,
                strip=False,
                upx=True,
-               name='sd-qt')
+               name='sd-main')
 
 
 # Build a .app for macOS

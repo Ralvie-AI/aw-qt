@@ -13,7 +13,7 @@ if [[ $(uname) == "Linux" ]]; then
 
     echo "Installing .desktop file to $AUTOSTART_PATH"
 
-    cp $ROOT_DIR/resources/sd-qt.desktop $AUTOSTART_PATH
+    cp $ROOT_DIR/resources/sd-main.desktop $AUTOSTART_PATH
     xdg-icon-resource install --novendor --size 32 $ROOT_DIR/media/logo/logo.png Sundial
     xdg-icon-resource install --novendor --size 512 $ROOT_DIR/media/logo/logo.png Sundial
 else

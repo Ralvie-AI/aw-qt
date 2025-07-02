@@ -1,16 +1,16 @@
 [tool.poetry]
-name = "sd-qt"
+name = "sd-main"
 version = "0.1.0"
 description = "Trayicon for ActivityWatch"
 authors = ["Erik Bjäreholt <erik@bjareho.lt>"]
 license = "MPL-2.0"
-include = ["sd_qt/resources.py"]  # resources.py is in .gitignore and generated before build
+include = ["sd_main/resources.py"]  # resources.py is in .gitignore and generated before build
 packages = [
-    { include = "sd_qt" },
+    { include = "sd_main" },
 ]
 
 [tool.poetry.scripts]
-sd-qt = "sd_qt:main"
+sd-main = "sd_main:main"
 
 [tool.poetry.dependencies]
 python = "^3.8,<3.13"
