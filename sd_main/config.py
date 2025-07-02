@@ -1,0 +1,25 @@
+from typing import List, Any
+
+from sd_core.config import load_config_toml
+
+
+default_config = """
+[sd-main]
+autostart_modules = ["sd-server", "sd-watcher-afk", "sd-watcher-window"]
+
+[sd-main-testing]
+autostart_modules = ["sd-server", "sd-watcher-afk", "sd-watcher-window"]
+""".strip()
+
+
+class AwQtSettings:
+    def __init__(self):
+        """
+         Initialize the autostart module. This is called by __init__ and should not be called directly
+         
+         @param testing - Whether or not we are
+        """
+        config = load_config_toml("sd-main", default_config)
+        config_section: Any = config["sd-main"]
+
+        self.autostart_modules: List[str] = config_section["autostart_modules"]
