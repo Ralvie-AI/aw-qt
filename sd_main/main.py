@@ -14,8 +14,9 @@ from sd_main.keychain_script import clear_keys
 from sd_main.manager import Manager
 from .config import AwQtSettings
 from .sd_desktop.main import run_application
-from sd_main.sd_desktop.monitor import start_exe
-from sd_main.sd_desktop.util import check_server_status
+from sd_main.sd_desktop.monitor import start_exe, is_process_running
+from sd_main.sd_desktop.util import check_server_status, credentials, retrieve_settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,20 @@ def main() -> None:
         logger.info("after main starting sd-server")
 
         if wait_until_server_is_up():
+            creds = credentials()
+            results = retrieve_settings()
+            process_running, afk_pid =  is_process_running("sd-watcher-afk")
+            logger.info(f"results check_sd_watcher {results}")
+
+            if not creds is None and creds.get("Authenticated"):
+                logger.info(f"starting sd-watcher-window on check box")
+                start_exe("sd-watcher-window")
+
+            if not creds is None and creds.get("Authenticated") and not process_running and results.get('idle_time'):
+                logger.info(f"starting sd-watcher-afk on check box")
+                start_exe("sd-watcher-afk")
+            
+
             run_application()
         else:
             logger.info(f"server not running..... ")

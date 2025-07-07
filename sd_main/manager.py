@@ -333,6 +333,18 @@ class Module:
          
          @return True if the process was
         """
+        if self.name == "sd-server":
+            logger.info(f" no need to run {self.name} is already running")
+            return
+        
+        if self.name == "sd-watcher-window":
+            logger.info(f" no need to run {self.name} is already running")
+            return
+        
+        if self.name == "sd-watcher-afk":
+            logger.info(f" no need to run {self.name} is already running")
+            return
+
         pid = self._read_pid()
         # Check if process is running
         if pid and self._is_process_running(pid):
