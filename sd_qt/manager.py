@@ -272,7 +272,7 @@ class Module:
         self.type = type
         self.config_file_path = config_file_path
         self.started = False
-        initialize_ini_file()        
+        # initialize_ini_file()        
 
     def _read_pid(self) -> Optional[int]:
         """
@@ -281,13 +281,22 @@ class Module:
          
          @return The PID or None if not
         """
-        config = configparser.ConfigParser()
-        config.read(self.config_file_path)
-        try:
-            return int(config.get(self.name, 'pid'))
-        except Exception as e:
-            logger.error(f"Error reading PID for {self.name}: {e}")
-            return None
+        exe_name = self.name + ".exe"        
+        exe_name = exe_name.lower()
+        pids = [
+            proc.pid
+            for proc in psutil.process_iter(['name'])
+            if proc.info['name'] and proc.info['name'].lower() == exe_name
+        ]
+        return pids[0] if pids else None
+    
+        # config = configparser.ConfigParser()
+        # config.read(self.config_file_path)
+        # try:
+        #     return int(config.get(self.name, 'pid'))
+        # except Exception as e:
+        #     logger.error(f"Error reading PID for {self.name}: {e}")
+        #     return None
 
     def _write_pid(self, pid: int):
         """
@@ -295,15 +304,17 @@ class Module:
          
          @param pid - PID to be written
         """
-        config = configparser.ConfigParser()
-        config.read(self.config_file_path)
-        # Add a section to the config if it doesn t already exist.
-        if not config.has_section(self.name):
-            config.add_section(self.name)
-        config.set(self.name, 'pid', str(pid))
-        with open(self.config_file_path, 'w') as configfile:
-            config.write(configfile)
-        logger.debug(f"PID for {self.name} written to file: {pid}")
+        pass
+
+        # config = configparser.ConfigParser()
+        # config.read(self.config_file_path)
+        # # Add a section to the config if it doesn t already exist.
+        # if not config.has_section(self.name):
+        #     config.add_section(self.name)
+        # config.set(self.name, 'pid', str(pid))
+        # with open(self.config_file_path, 'w') as configfile:
+        #     config.write(configfile)
+        # logger.debug(f"PID for {self.name} written to file: {pid}")
 
     def _update_status_in_ini(self, status: bool):
         """
@@ -311,14 +322,15 @@ class Module:
          
          @param status - True if job is
         """
-        config = configparser.ConfigParser()
-        config.read(self.config_file_path)
-        # Add a section to the config if it doesn t already exist.
-        if not config.has_section(self.name):
-            config.add_section(self.name)
-        config.set(self.name, 'status', 'True' if status else 'False')
-        with open(self.config_file_path, 'w') as configfile:
-            config.write(configfile)
+        pass
+        # config = configparser.ConfigParser()
+        # config.read(self.config_file_path)
+        # # Add a section to the config if it doesn t already exist.
+        # if not config.has_section(self.name):
+        #     config.add_section(self.name)
+        # config.set(self.name, 'status', 'True' if status else 'False')
+        # with open(self.config_file_path, 'w') as configfile:
+        #     config.write(configfile)
 
     def _is_process_running(self, pid: int) -> bool:
         """
@@ -373,8 +385,8 @@ class Module:
         self._process = subprocess.Popen(
             exec_cmd, universal_newlines=True, startupinfo=startupinfo
         )
-        self._write_pid(self._process.pid)
-        self._update_status_in_ini(True)
+        # self._write_pid(self._process.pid)
+        # self._update_status_in_ini(True)
 
     def stop(self):
         """
@@ -389,8 +401,8 @@ class Module:
                 process.terminate()  # or process.kill() if terminate does not work
                 logger.info(f"Stopped {self.name}")
                 self.started = False
-                self._update_status_in_ini(False)  # Update status to False when stopped
-                self._write_pid(0)  # Remove the PID from the INI file
+                # self._update_status_in_ini(False)  # Update status to False when stopped
+                # self._write_pid(0)  # Remove the PID from the INI file
             except psutil.Error as e:
                 logger.error(f"Error stopping {self.name}: {e}")
         else:
