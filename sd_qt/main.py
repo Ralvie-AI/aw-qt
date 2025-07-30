@@ -5,7 +5,6 @@ import subprocess
 import platform
 import signal
 import threading
-import requests
 from time import sleep
 
 from sd_core.log import setup_logging
@@ -14,6 +13,7 @@ from sd_qt.manager import Manager
 from .config import AwQtSettings
 from .sd_desktop.main import run_application
 from sd_qt.sd_desktop.util import (get_window_version, is_windows)
+from sd_qt.sd_desktop.const import VERSION_DISPLAY
 
 logger = logging.getLogger(__name__)
 
@@ -45,11 +45,11 @@ def main() -> None:
 
             os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-webgl'
 
+            logger.info(f"VERSION => {VERSION_DISPLAY}")
             logger.info(f"env => {os.environ}")
 
         if platform.system() == "Darwin":
             subprocess.call("syslog -s 'sd-qt started'", shell=True)
-
         
         logger.info("Started sd-qt...")
 
