@@ -205,6 +205,9 @@ def _discover_modules_system() -> List["Module"]:
     for path in paths:
         try:
             ls = os.listdir(path)
+        except FileNotFoundError:
+            logger.warning(f"FileNotFoundError while listing {path}, skipping")
+            continue
         except PermissionError:
             logger.warning(f"PermissionError while listing {path}, skipping")
             continue
