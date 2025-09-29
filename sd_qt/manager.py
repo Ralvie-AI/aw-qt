@@ -185,9 +185,7 @@ def _discover_modules_bundled() -> List["Module"]:
 
 def _discover_modules_system() -> List["Module"]:
     """
-     Find all modules in the system PATH This is a helper function to get a list of all modules that are installed on the system.
-     
-     
+     Find all modules in the system PATH This is a helper function to get a list of all modules that are installed on the system.     
      @return List [ Module ] : List of Module objects that are
     """
     """Find all sd- modules in PATH"""
