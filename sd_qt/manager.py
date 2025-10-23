@@ -361,13 +361,13 @@ class Module:
         # Check if idle_time set False and no need to start sd-watcher-afk module.
         # if self.name == "sd-watcher-afk" and self.settings and self.settings.get("idle_time") == False:
         if self.name == "sd-watcher-afk":
-            logger.info(f"{self.name} is no need to run.")
+            # logger.info(f"{self.name} is no need to run.")
             return None
 
         pid = self._read_pid()
         # Check if process is running
         if pid and self._is_process_running(pid) and self.is_process_name_equal(pid):
-            logger.info(f"{self.name} is already running")
+            # logger.info(f"{self.name} is already running")
             return
         
         exec_cmd = [str(self.path)]
