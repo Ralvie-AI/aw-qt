@@ -1,8 +1,12 @@
+import os
 import json
 import requests
 from cachetools import LRUCache
 from sd_core.cache import cache_user_credentials, clear_all_credentials
 from sd_core.db_cache import delete
+
+os.environ.pop('HTTP_PROXY', None)
+os.environ.pop('HTTPS_PROXY', None)
 
 host = "http://localhost:7600/api"
 cache = LRUCache(maxsize=100)
