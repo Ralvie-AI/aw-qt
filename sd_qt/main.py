@@ -12,17 +12,11 @@ from sd_qt.keychain_script import clear_keys
 from sd_qt.manager import Manager
 from .config import AwQtSettings
 from .sd_desktop.main import run_application
-from sd_qt.sd_desktop.util import (get_window_version, is_windows)
+from sd_qt.sd_desktop.util import (get_window_version, is_windows, get_running_path)
 from sd_qt.sd_desktop.const import VERSION_DISPLAY
 
 logger = logging.getLogger(__name__)
 
-
-def get_running_path():
-    if getattr(sys, 'frozen', False):
-        return os.path.dirname(sys.executable)
-    else:
-        return os.path.dirname(os.path.abspath(__file__))
 
 def main() -> None:
     """
