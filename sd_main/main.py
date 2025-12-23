@@ -16,6 +16,7 @@ from .config import AwQtSettings
 from .sd_desktop.main import run_application
 from sd_main.sd_desktop.monitor import start_exe, is_process_running
 from sd_main.sd_desktop.util import check_server_status, credentials, retrieve_settings
+from sd_main.sd_desktop.const import VERSION_DISPLAY, REMOTE_HOST, REMOTE_PROTOCOL
 
 
 logger = logging.getLogger(__name__)
@@ -42,11 +43,16 @@ def main() -> None:
     The main function of the application.
     """
     try:
+
         if platform.system() == "Darwin":
             subprocess.call("syslog -s 'sd-main started'", shell=True)
 
         setup_logging("sd-main", log_file=True)
         logger.info("Started sd-main...")
+        logger.info(f"VERSION => {VERSION_DISPLAY}")
+        logger.info(f"REMOTE_HOST => {REMOTE_HOST}")
+        logger.info(f"REMOTE_PROTOCOL => {REMOTE_PROTOCOL}")
+        logger.info(f"env => {os.environ}")
 
         if platform.system() == "Darwin":
             subprocess.call("syslog -s 'sd-main successfully started logging'", shell=True)
