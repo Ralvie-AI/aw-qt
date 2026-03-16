@@ -372,7 +372,7 @@ class Module:
         
         exec_cmd = [str(self.path)]
         self.started = True
-        logger.info(f"Starting {self.name}")
+        # logger.info(f"Starting {self.name}")
         startupinfo = None
         # This function is called by the main bundle when the OS is running on the OS X.
         if sys.platform == "win32" or sys.platform == "cygwin":
@@ -394,7 +394,6 @@ class Module:
          Stop the process if it is running and update status in INI file to
         """
         pid = self._read_pid()
-        print(pid)
         # Stop the process and update the status to False
         if pid and self._is_process_running(pid):
             try:
@@ -406,8 +405,8 @@ class Module:
                 # self._write_pid(0)  # Remove the PID from the INI file
             except psutil.Error as e:
                 logger.error(f"Error stopping {self.name}: {e}")
-        else:
-            logger.info(f"{self.name} is not running or PID is invalid")
+        # else:            
+        #     logger.info(f"{self.name} is not running or PID is invalid")
 
     def is_alive(self) -> bool:
         """
