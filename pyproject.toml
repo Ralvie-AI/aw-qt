@@ -24,7 +24,8 @@ click = "*"
 importlib-metadata = {version = "*", python = "<3.10"}
 
 # provides pkg_resources, needed for pyinstaller for some reason
-setuptools = "*"
+setuptools = "^71.1.0"
+pyinstaller = "6.18.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "*"
