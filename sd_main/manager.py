@@ -130,8 +130,8 @@ def _discover_modules_in_directory(path: str) -> List["Module"]:
             modules.append(Module(name, Path(path), "bundled"))
         elif os.path.isdir(path) and os.access(path, os.X_OK):
             modules.extend(_discover_modules_in_directory(path))
-        else:
-            logger.warning(f"Found matching file but was not executable: {path}")
+        # else:
+        #     logger.warning(f"Found matching file but was not executable: {path}")
     return modules
 
 
@@ -334,15 +334,15 @@ class Module:
          @return True if the process was
         """
         if self.name == "sd-server":
-            logger.info(f" no need to run {self.name} is already running")
+            # logger.info(f" no need to run {self.name} is already running")
             return
         
         if self.name == "sd-watcher-window":
-            logger.info(f" no need to run {self.name} is already running")
+            # logger.info(f" no need to run {self.name} is already running")
             return
         
         if self.name == "sd-watcher-afk":
-            logger.info(f" no need to run {self.name} is already running")
+            # logger.info(f" no need to run {self.name} is already running")
             return
 
         pid = self._read_pid()
@@ -418,14 +418,14 @@ class Module:
             try:
                 process = psutil.Process(pid)
                 process.terminate()  # or process.kill() if terminate does not work
-                logger.info(f"Stopped {self.name}")
+                # logger.info(f"Stopped {self.name}")
                 self.started = False
                 self._update_status_in_ini(False)  # Update status to False when stopped
                 self._write_pid(0)  # Remove the PID from the INI file
             except psutil.Error as e:
                 logger.error(f"Error stopping {self.name}: {e}")
-        else:
-            logger.info(f"{self.name} is not running or PID is invalid")
+        # else:
+        #     logger.info(f"{self.name} is not running or PID is invalid")
 
     def is_alive(self) -> bool:
         """

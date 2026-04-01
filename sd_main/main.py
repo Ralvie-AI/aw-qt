@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 def wait_until_server_is_up():
     for _ in range(60):
         try:
-            logger.info(f"check_server_status() {check_server_status()}")
+            # logger.info(f"check_server_status() {check_server_status()}")
             if check_server_status() == False:
                 now = datetime.now()
                 logger.info(f"check_server_status() time {now}")
