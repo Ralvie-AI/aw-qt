@@ -29,7 +29,7 @@ def wait_until_server_is_up():
             # logger.info(f"check_server_status() {check_server_status()}")
             if check_server_status() == False:
                 now = datetime.now()
-                logger.info(f"check_server_status() time {now}")
+                # logger.info(f"check_server_status() time {now}")
                 sleep(1)
             else:
                 return True
@@ -64,15 +64,15 @@ def main() -> None:
                 logger.warning("Permission denied when trying to set process group")
 
         clear_keys()
-        logger.info("before main starting sd-server")
+        # logger.info("before main starting sd-server")
         threading.Thread(target=start_exe, args=("sd-server",), daemon=True).start()
-        logger.info("after main starting sd-server")
+        logger.info("starting sd-server")
 
         if wait_until_server_is_up():
             creds = credentials()
             results = retrieve_settings()
             process_running, afk_pid =  is_process_running("sd-watcher-afk")
-            logger.info(f"results check_sd_watcher {results}")
+            # logger.info(f"results check_sd_watcher {results}")
 
             if not creds is None and creds.get("Authenticated"):
                 logger.info(f"starting sd-watcher-window on check box")

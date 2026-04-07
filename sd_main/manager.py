@@ -166,7 +166,7 @@ def _discover_modules_bundled() -> List["Module"]:
         modules += _discover_modules_in_directory(path)
 
     modules = list(filter_modules(modules))
-    logger.info(f"Found {len(modules)} bundled modules")
+    # logger.info(f"Found {len(modules)} bundled modules")
     _log_modules(modules)
     return modules
 
@@ -212,7 +212,7 @@ def _discover_modules_system() -> List["Module"]:
                 modules.append(Module(name, Path(path) / basename, "system"))
 
     modules = list(filter_modules(modules))
-    logger.info(f"Found {len(modules)} system modules")
+    # logger.info(f"Found {len(modules)} system modules")
     _log_modules(modules)
     return modules
 
@@ -359,7 +359,7 @@ class Module:
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         elif sys.platform == "darwin":
-            logger.info("macOS: Disable dock icon")
+            # logger.info("macOS: Disable dock icon")
             import AppKit
             AppKit.NSBundle.mainBundle().infoDictionary()["LSBackgroundOnly"] = "1"
 
@@ -397,7 +397,7 @@ class Module:
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         elif sys.platform == "darwin":
-            logger.info("macOS: Disable dock icon")
+            # logger.info("macOS: Disable dock icon")
             import AppKit
             AppKit.NSBundle.mainBundle().infoDictionary()["LSBackgroundOnly"] = "1"
 
