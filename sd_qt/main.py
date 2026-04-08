@@ -8,11 +8,12 @@ import threading
 from time import sleep
 
 from sd_core.log import setup_logging
+from sd_core.util import get_running_path
 from sd_qt.keychain_script import clear_keys
 from sd_qt.manager import Manager
 from .config import AwQtSettings
 from .sd_desktop.main import run_application
-from sd_qt.sd_desktop.util import (get_window_version, is_windows, get_running_path)
+from sd_qt.sd_desktop.util import (get_window_version, is_windows)
 from sd_qt.sd_desktop.const import VERSION_DISPLAY
 
 logger = logging.getLogger(__name__)
