@@ -5,35 +5,57 @@ import subprocess
 import platform
 import signal
 import threading
+from datetime import datetime
 from time import sleep
 
 from sd_core.log import setup_logging
-from sd_core.util import get_running_path
+from sd_core.util import get_running_path, start_exe
+from sd_core.os_util import is_windows
 from sd_qt.keychain_script import clear_keys
-from sd_qt.manager import Manager
-from .config import AwQtSettings
+# from sd_qt.manager import Manager
+# from .config import AwQtSettings
 from .sd_desktop.main import run_application
-from sd_qt.sd_desktop.util import (get_window_version, is_windows)
 from sd_qt.sd_desktop.const import VERSION_DISPLAY
+from sd_qt.sd_desktop.util import check_server_status
 
 logger = logging.getLogger(__name__)
+
+# Wait for the server to become available
+def wait_until_server_is_up():
+    for _ in range(60):
+        try:
+            # logger.info(f"check_server_status() {check_server_status()}")
+            if check_server_status() == False:
+                now = datetime.now()
+                logger.info(f"check_server_status() time {now}")
+                sleep(1)
+            else:
+                return True
+        except:
+            sleep(1)
+            
+    return False
 
 
 def main() -> None:
     """
     The main function of the application.
     """
-    try:
-        
+    try:        
         setup_logging("sd-qt", log_file=True)
-
+        clear_keys()
         if is_windows():
             # if get_window_version() == 10:
             #     os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-webgl'
 
             if getattr(sys, 'frozen', False):
-                logger.info(f"running path {get_running_path()}")
-                frozen_path = os.path.join(get_running_path(), "PySide6")
+                running_path = get_running_path()
+                sd_server_exe = os.path.join(running_path, "sd-server.exe")
+                threading.Thread(target=start_exe, args=(sd_server_exe,), daemon=True).start()
+                logger.info("starting sd-server")
+
+                logger.info(f"running path {running_path}")
+                frozen_path = os.path.join(running_path, "PySide6")
                 logger.info(f"running path of QtWebEngineProcess {frozen_path}")
                 os.environ['QTWEBENGINEPROCESS_PATH'] = os.path.join(frozen_path, "QtWebEngineProcess.exe")    
                 os.environ['QTWEBENGINE_RESOURCES_PATH'] = os.path.join(frozen_path, "resources")  
@@ -56,15 +78,15 @@ def main() -> None:
                 os.setpgrp()
             except PermissionError:
                 logger.warning("Permission denied when trying to set process group")
-
-        clear_keys()
-
-        config = AwQtSettings()
-
-        manager = Manager()
         
-        manager.autostart(["sd-server"])
-        run_application()
+        #config = AwQtSettings()
+        # manager = Manager()        
+        # manager.autostart(["sd-server"])
+
+        if wait_until_server_is_up():
+            run_application()
+        else:
+            logger.info(f"server not running..... ")
 
         if sys.platform == "win32":
             try:

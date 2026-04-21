@@ -2,8 +2,7 @@ import os
 import json
 import requests
 from cachetools import LRUCache
-from sd_core.cache import cache_user_credentials, clear_all_credentials
-from sd_core.db_cache import delete
+from sd_core.cache import credentials
 
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
@@ -16,9 +15,6 @@ events_cache_key = "event_cache"
 cache_key = "settings"
 
 # Functions to interact with settings
-def credentials():
-    creds = cache_user_credentials("Sundial")
-    return creds
 
 def add_settings(key, value):
     try:
