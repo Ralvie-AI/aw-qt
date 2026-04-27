@@ -1,38 +1,44 @@
 import os
 import json
 import requests
+
 from cachetools import LRUCache
 from sd_core.cache import credentials
+from sd_qt.const import HOST, SETTINGS_CACHE_KEY
 
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
 
-host = "http://localhost:7600/api"
+
 cache = LRUCache(maxsize=100)
 events_cache = LRUCache(maxsize=2000)
-
-events_cache_key = "event_cache"
-cache_key = "settings"
 
 # Functions to interact with settings
 
 def add_settings(key, value):
-    try:
-        headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-        data = json.dumps({"code": key, "value": value})
-        settings = requests.post(host + "/0/settings", data=data, headers=headers)
-        if settings.status_code == 200:
-            cache[cache_key] = settings.json()
-        else:
-            print(f"Error adding settings: {settings.status_code} {settings.text}")
-            return None
-    except Exception as e:
-        print(f"Error in add_settings: {e}")
-        return None
+    headers = {'Content-Type': 'application/json',
+               'Accept': 'application/json'}
+    data = json.dumps({"code": key, "value": value})
+    settings = requests.post(HOST + "/0/settings", data=data, headers=headers)
+    print("############",settings.json())
+
+    sundail_token = ""
+    creds = credentials()
+    if creds:
+        sundail_token = creds["token"] if creds['token'] else None
+
+        sett = requests.get(HOST + "/0/getallsettings",
+                                    headers={"Authorization": sundail_token})
+        cache[SETTINGS_CACHE_KEY] = sett.json()
+
+        # Clear the events cache to make effect on enabling or disabling on "Enable idle time detection" 
+        events_cache.clear()
+    else:
+        cache[SETTINGS_CACHE_KEY] = settings.json()
 
 def cached_credentials():
     try:
-        credentials = requests.get(host + "/0/userCredentials")
+        credentials = requests.get(HOST + "/0/userCredentials")
         if credentials.status_code == 200:
             return credentials.json()
         else:
@@ -42,30 +48,6 @@ def cached_credentials():
         print(f"Error in cached_credentials: {e}")
         return None
 
-def retrieve_settings():
-    creds = credentials()
-    if creds:
-        sundial_token = creds["token"] if creds['token'] else None
-        try:
-            sett = requests.get(host + "/0/getallsettings", headers={"Authorization": sundial_token})
-            if sett.status_code == 200:
-                settings = sett.json()
-                print(settings)
-                return settings
-            else:
-                print(f"Error retrieving settings: {sett.status_code} {sett.text}")
-                return None
-        except Exception as e:
-            print(f"Error retrieving settings: {e}")
-            return None
-    return None
-
-def user_status():
-    creds = credentials()
-    if creds:
-        return creds['userId']
-    return None
-
 def idletime_settings():
     sundial_token = ""
     creds = credentials()
@@ -73,7 +55,7 @@ def idletime_settings():
         sundial_token = creds["token"] if creds['token'] else None
     headers = {'Content-Type': 'application/json', 'Accept': 'application/json', "Authorization": sundial_token}
     try:
-        response = requests.get(host + "/0/idletime", headers=headers)
+        response = requests.get(HOST + "/0/idletime", headers=headers)
         if response.status_code == 200:
             print(f"Success: {response.json()['message']}")
         else:
@@ -91,7 +73,7 @@ def launchon_start(status):
     headers = {'Content-Type': 'application/json', 'Accept': 'application/json', "Authorization": sundial_token}
     data = json.dumps({"status": status})
     try:
-        settings = requests.post(host + "/0/launchOnStart", data=data, headers=headers)
+        settings = requests.post(HOST + "/0/launchOnStart", data=data, headers=headers)
         if settings.status_code != 200:
             print(f"Error setting launchOnStart: {settings.status_code} {settings.text}")
             return None
@@ -101,10 +83,54 @@ def launchon_start(status):
 
 def signout():
     try:
-        settings = requests.get(host + "/0/signout")
+        settings = requests.get(HOST + "/0/signout")
         if settings.status_code != 200:
             print(f"Error signing out: {settings.status_code} {settings.text}")
             return None
     except Exception as e:
         print(f"Error in signout: {e}")
         return None
+
+
+def retrieve_settings():
+    creds = credentials()
+    sundail_token = ""
+    cached_settings = cache.get(SETTINGS_CACHE_KEY)
+    # import pdb; pdb.set_trace()
+    if cached_settings:
+        return cached_settings
+    else:
+        if creds:
+            sundail_token = creds["token"] if creds['token'] else None
+        try:
+            sett = requests.get(HOST + "/0/getallsettings",
+                                headers={"Authorization": sundail_token})
+            settings = sett.json()
+            cache[SETTINGS_CACHE_KEY] = settings
+
+            # Clear the events cache to make effect on enabling or disabling on "Enable idle time detection" 
+            events_cache.clear()
+        except:
+            settings = {}
+        return settings
+    
+def check_server_status():
+    try:
+        response = requests.get(
+            HOST + "/0/server_status")
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
+    
+
+def clear_cache():
+    """
+    Clears both the general cache and the events cache.
+    """
+    try:
+        cache.clear()
+        events_cache.clear()
+        print("Cache cleared successfully.")
+    except Exception as e:
+        print(f"An error occurred while clearing the cache: {e}")
+        

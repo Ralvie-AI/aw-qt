@@ -14,9 +14,9 @@ from sd_core.os_util import is_windows
 from sd_qt.keychain_script import clear_keys
 # from sd_qt.manager import Manager
 # from .config import AwQtSettings
+from sd_qt.util import check_server_status
 from .sd_desktop.main import run_application
 from sd_qt.sd_desktop.const import VERSION_DISPLAY
-from sd_qt.sd_desktop.util import check_server_status
 
 logger = logging.getLogger(__name__)
 
