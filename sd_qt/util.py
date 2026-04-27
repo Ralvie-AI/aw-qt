@@ -4,7 +4,8 @@ import requests
 
 from cachetools import LRUCache
 from sd_core.cache import credentials
-from sd_qt.const import HOST, SETTINGS_CACHE_KEY
+from sd_core.const import SETTINGS_CACHE_KEY
+from sd_qt.const import HOST
 
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
@@ -133,4 +134,3 @@ def clear_cache():
         print("Cache cleared successfully.")
     except Exception as e:
         print(f"An error occurred while clearing the cache: {e}")
-        

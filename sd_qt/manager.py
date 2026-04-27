@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 ignored_filenames = ["sd-cli", "sd-client", "sd-qt", "sd-qt.desktop", "sd-qt.spec", "sd-main"]
 auto_start_modules = ["sd-server"]
-settings_cache_key = "settings_cache"
 
 # The path of sd_qt
 if getattr(sys, 'frozen', False):
