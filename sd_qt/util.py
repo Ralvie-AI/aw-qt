@@ -4,8 +4,8 @@ import requests
 
 from cachetools import LRUCache
 from sd_core.cache import credentials
-from sd_core.const import SETTINGS_CACHE_KEY
-from sd_qt.const import HOST
+from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST
+
 
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
@@ -20,7 +20,7 @@ def add_settings(key, value):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json'}
     data = json.dumps({"code": key, "value": value})
-    settings = requests.post(HOST + "/0/settings", data=data, headers=headers)
+    settings = requests.post(LOCAL_HOST + "/0/settings", data=data, headers=headers)
     print("############",settings.json())
 
     sundail_token = ""
@@ -28,7 +28,7 @@ def add_settings(key, value):
     if creds:
         sundail_token = creds["token"] if creds['token'] else None
 
-        sett = requests.get(HOST + "/0/getallsettings",
+        sett = requests.get(LOCAL_HOST + "/0/getallsettings",
                                     headers={"Authorization": sundail_token})
         cache[SETTINGS_CACHE_KEY] = sett.json()
 
@@ -39,7 +39,7 @@ def add_settings(key, value):
 
 def cached_credentials():
     try:
-        credentials = requests.get(HOST + "/0/userCredentials")
+        credentials = requests.get(LOCAL_HOST + "/0/userCredentials")
         if credentials.status_code == 200:
             return credentials.json()
         else:
@@ -56,7 +56,7 @@ def idletime_settings():
         sundial_token = creds["token"] if creds['token'] else None
     headers = {'Content-Type': 'application/json', 'Accept': 'application/json', "Authorization": sundial_token}
     try:
-        response = requests.get(HOST + "/0/idletime", headers=headers)
+        response = requests.get(LOCAL_HOST + "/0/idletime", headers=headers)
         if response.status_code == 200:
             print(f"Success: {response.json()['message']}")
         else:
@@ -74,7 +74,7 @@ def launchon_start(status):
     headers = {'Content-Type': 'application/json', 'Accept': 'application/json', "Authorization": sundial_token}
     data = json.dumps({"status": status})
     try:
-        settings = requests.post(HOST + "/0/launchOnStart", data=data, headers=headers)
+        settings = requests.post(LOCAL_HOST + "/0/launchOnStart", data=data, headers=headers)
         if settings.status_code != 200:
             print(f"Error setting launchOnStart: {settings.status_code} {settings.text}")
             return None
@@ -84,7 +84,7 @@ def launchon_start(status):
 
 def signout():
     try:
-        settings = requests.get(HOST + "/0/signout")
+        settings = requests.get(LOCAL_HOST + "/0/signout")
         if settings.status_code != 200:
             print(f"Error signing out: {settings.status_code} {settings.text}")
             return None
@@ -104,7 +104,7 @@ def retrieve_settings():
         if creds:
             sundail_token = creds["token"] if creds['token'] else None
         try:
-            sett = requests.get(HOST + "/0/getallsettings",
+            sett = requests.get(LOCAL_HOST + "/0/getallsettings",
                                 headers={"Authorization": sundail_token})
             settings = sett.json()
             cache[SETTINGS_CACHE_KEY] = settings
@@ -118,7 +118,7 @@ def retrieve_settings():
 def check_server_status():
     try:
         response = requests.get(
-            HOST + "/0/server_status")
+            LOCAL_HOST + "/0/server_status")
         return response.status_code == 200
     except requests.RequestException:
         return False
