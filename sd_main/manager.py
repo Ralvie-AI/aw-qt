@@ -291,7 +291,7 @@ class Module:
         config.set(self.name, 'pid', str(pid))
         with open(self.config_file_path, 'w') as configfile:
             config.write(configfile)
-        logger.debug(f"PID for {self.name} written to file: {pid}")
+        # logger.debug(f"PID for {self.name} written to file: {pid}")
 
     def _update_status_in_ini(self, status: bool):
         """
