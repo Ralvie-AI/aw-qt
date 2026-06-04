@@ -1,6 +1,6 @@
 import os
 from sd_core.dirs import get_data_dir
-from sd_core.cache import delete_password, clear_all_credentials, cache_user_credentials
+from sd_core.cache import delete_password, credentials
 from sd_core.const import CACHE_KEY
 
 file_path = get_data_dir("sd-qt")
@@ -9,8 +9,7 @@ config_file_path = os.path.join(file_path, "deletion_done.txt")
 
 def delete_data():
     delete_password(CACHE_KEY)
-    clear_all_credentials()
-    if cache_user_credentials(CACHE_KEY) == None:
+    if credentials() == None:
         return True
     else:
         return False
