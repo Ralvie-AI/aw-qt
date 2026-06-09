@@ -1,15 +1,14 @@
 import os
 import json
-import requests
 
+import requests
 from cachetools import LRUCache
+
 from sd_core.cache import credentials
 from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST
 
-
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
-
 
 cache = LRUCache(maxsize=100)
 events_cache = LRUCache(maxsize=2000)
@@ -36,62 +35,6 @@ def add_settings(key, value):
         events_cache.clear()
     else:
         cache[SETTINGS_CACHE_KEY] = settings.json()
-
-def cached_credentials():
-    try:
-        credentials = requests.get(LOCAL_HOST + "/0/userCredentials")
-        if credentials.status_code == 200:
-            return credentials.json()
-        else:
-            print(f"Error retrieving credentials: {credentials.status_code} {credentials.text}")
-            return None
-    except Exception as e:
-        print(f"Error in cached_credentials: {e}")
-        return None
-
-def idletime_settings():
-    sundial_token = ""
-    creds = credentials()
-    if creds:
-        sundial_token = creds["token"] if creds['token'] else None
-    headers = {'Content-Type': 'application/json', 'Accept': 'application/json', "Authorization": sundial_token}
-    try:
-        response = requests.get(LOCAL_HOST + "/0/idletime", headers=headers)
-        if response.status_code == 200:
-            print(f"Success: {response.json()['message']}")
-        else:
-            print(f"Error: {response.json().get('message', 'Unknown error')}")
-            return None
-    except Exception as e:
-        print(f"Error in idletime_settings: {e}")
-        return None
-
-def launchon_start(status):
-    sundial_token = ""
-    creds = credentials()
-    if creds:
-        sundial_token = creds["token"] if creds['token'] else None
-    headers = {'Content-Type': 'application/json', 'Accept': 'application/json', "Authorization": sundial_token}
-    data = json.dumps({"status": status})
-    try:
-        settings = requests.post(LOCAL_HOST + "/0/launchOnStart", data=data, headers=headers)
-        if settings.status_code != 200:
-            print(f"Error setting launchOnStart: {settings.status_code} {settings.text}")
-            return None
-    except Exception as e:
-        print(f"Error in launchon_start: {e}")
-        return None
-
-def signout():
-    try:
-        settings = requests.get(LOCAL_HOST + "/0/signout")
-        if settings.status_code != 200:
-            print(f"Error signing out: {settings.status_code} {settings.text}")
-            return None
-    except Exception as e:
-        print(f"Error in signout: {e}")
-        return None
-
 
 def retrieve_settings():
     creds = credentials()
