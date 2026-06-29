@@ -12,8 +12,6 @@ from sd_core.log import setup_logging
 from sd_core.util import get_running_path, start_exe
 from sd_core.os_util import is_windows
 from sd_qt.keychain_script import clear_keys
-# from sd_qt.manager import Manager
-# from .config import AwQtSettings
 from sd_qt.util import check_server_status
 from .sd_desktop.main import run_application
 from sd_qt.sd_desktop.const import VERSION_DISPLAY
@@ -78,10 +76,6 @@ def main() -> None:
                 os.setpgrp()
             except PermissionError:
                 logger.warning("Permission denied when trying to set process group")
-        
-        #config = AwQtSettings()
-        # manager = Manager()        
-        # manager.autostart(["sd-server"])
 
         if wait_until_server_is_up():
             run_application()
