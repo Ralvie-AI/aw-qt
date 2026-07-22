@@ -1,17 +1,23 @@
 import os
 import json
+import logging
+
 
 import requests
 from cachetools import LRUCache
 
 from sd_core.cache import credentials
-from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST
+from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST, CERT
 
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
 
+
+logger = logging.getLogger(__name__)
+
 cache = LRUCache(maxsize=100)
 events_cache = LRUCache(maxsize=2000)
+
 
 # Functions to interact with settings
 
@@ -19,7 +25,8 @@ def add_settings(key, value):
     headers = {'Content-Type': 'application/json',
                'Accept': 'application/json'}
     data = json.dumps({"code": key, "value": value})
-    settings = requests.post(LOCAL_HOST + "/0/settings", data=data, headers=headers)
+    settings = requests.post(LOCAL_HOST + "/0/settings", data=data, headers=headers,
+                             verify=str(CERT),)
     print("############",settings.json())
 
     sundail_token = ""
@@ -28,7 +35,8 @@ def add_settings(key, value):
         sundail_token = creds["token"] if creds['token'] else None
 
         sett = requests.get(LOCAL_HOST + "/0/getallsettings",
-                                    headers={"Authorization": sundail_token})
+                                    headers={"Authorization": sundail_token},
+                                    verify=str(CERT),)
         cache[SETTINGS_CACHE_KEY] = sett.json()
 
         # Clear the events cache to make effect on enabling or disabling on "Enable idle time detection" 
@@ -48,7 +56,8 @@ def retrieve_settings():
             sundail_token = creds["token"] if creds['token'] else None
         try:
             sett = requests.get(LOCAL_HOST + "/0/getallsettings",
-                                headers={"Authorization": sundail_token})
+                                headers={"Authorization": sundail_token},
+                                verify=str(CERT),)
             settings = sett.json()
             cache[SETTINGS_CACHE_KEY] = settings
 
@@ -61,11 +70,30 @@ def retrieve_settings():
 def check_server_status():
     try:
         response = requests.get(
-            LOCAL_HOST + "/0/server_status")
+            LOCAL_HOST + "/0/server_status",
+            verify=str(CERT),
+            timeout=5,
+        )
+
+        logger.debug("Server returned HTTP %s", response.status_code)
+
         return response.status_code == 200
-    except requests.RequestException:
+
+    except requests.exceptions.SSLError as e:
+        logger.exception("TLS/SSL verification failed: %s", e)
         return False
-    
+
+    except requests.exceptions.ConnectionError as e:
+        logger.exception("Unable to connect to server: %s", e)
+        return False
+
+    except requests.exceptions.Timeout as e:
+        logger.exception("Connection timed out: %s", e)
+        return False
+
+    except requests.RequestException as e:
+        logger.exception("Request failed: %s", e)
+        return False
 
 def clear_cache():
     """

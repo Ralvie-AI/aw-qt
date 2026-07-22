@@ -59,6 +59,7 @@ def main() -> None:
                 os.environ['QTWEBENGINE_RESOURCES_PATH'] = os.path.join(frozen_path, "resources")  
 
             os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-webgl'
+            # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--enable-logging=stderr --v=1"
 
             logger.info(f"VERSION => {VERSION_DISPLAY}")
             logger.info(f"env => {os.environ}")
