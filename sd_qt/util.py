@@ -27,8 +27,6 @@ def add_settings(key, value):
     data = json.dumps({"code": key, "value": value})
     settings = requests.post(LOCAL_HOST + "/0/settings", data=data, headers=headers,
                              verify=str(CERT),)
-    print("############",settings.json())
-
     sundail_token = ""
     creds = credentials()
     if creds:
