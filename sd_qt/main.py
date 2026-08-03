@@ -88,15 +88,7 @@ def main() -> None:
                 sleep(threading.TIMEOUT_MAX)
             except KeyboardInterrupt:
                 logger.info("Keyboard interrupt received, stopping...")
-        else:
-            def handle_signal(signum, frame):
-                logger.info(f"Signal {signum} received, stopping...")
-                manager.stop_all()
-                sys.exit(0)
-
-            signal.signal(signal.SIGTERM, handle_signal)
-            signal.signal(signal.SIGINT, handle_signal)
-            signal.pause()
+        
 
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
