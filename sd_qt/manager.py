@@ -76,7 +76,6 @@ def initialize_ini_file():
     Initialize the INI file with default values if it doesn't exist.
     """
     if os.path.exists(config_file_path) and not is_valid_ini(config_file_path):
-        print(f"File {config_file_path} was corrupted.")
         os.remove(config_file_path)
          
     # Initialize the INI file with default values.

@@ -100,6 +100,5 @@ def clear_cache():
     try:
         cache.clear()
         events_cache.clear()
-        print("Cache cleared successfully.")
     except Exception as e:
-        print(f"An error occurred while clearing the cache: {e}")
+        logger.exception(f"An error occurred while clearing the cache: {e}")
