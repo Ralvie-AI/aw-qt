@@ -8,6 +8,7 @@ from cachetools import LRUCache
 
 from sd_core.cache import credentials
 from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST, CERT
+from sd_core.util import stop_process_by_exe, start_exe
 
 os.environ.pop('HTTP_PROXY', None)
 os.environ.pop('HTTPS_PROXY', None)
@@ -79,6 +80,9 @@ def check_server_status():
 
     except requests.exceptions.SSLError as e:
         logger.exception("TLS/SSL verification failed: %s", e)
+        stop_process_by_exe("sd-server.exe")
+        start_exe("sd-server.exe")
+        
         return False
 
     except requests.exceptions.ConnectionError as e:
