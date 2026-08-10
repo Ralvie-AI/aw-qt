@@ -7,7 +7,7 @@ import requests
 from cachetools import LRUCache
 
 from sd_core.cache import credentials
-from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST, CERT
+from sd_core.const import SETTINGS_CACHE_KEY, LOCAL_HOST, CERT_FILE
 from sd_core.util import stop_process_by_exe, start_exe
 
 os.environ.pop('HTTP_PROXY', None)
@@ -27,7 +27,7 @@ def add_settings(key, value):
                'Accept': 'application/json'}
     data = json.dumps({"code": key, "value": value})
     settings = requests.post(LOCAL_HOST + "/0/settings", data=data, headers=headers,
-                             verify=str(CERT),)
+                             verify=str(CERT_FILE),)
     sundail_token = ""
     creds = credentials()
     if creds:
@@ -35,7 +35,7 @@ def add_settings(key, value):
 
         sett = requests.get(LOCAL_HOST + "/0/getallsettings",
                                     headers={"Authorization": sundail_token},
-                                    verify=str(CERT),)
+                                    verify=str(CERT_FILE),)
         cache[SETTINGS_CACHE_KEY] = sett.json()
 
         # Clear the events cache to make effect on enabling or disabling on "Enable idle time detection" 
@@ -56,7 +56,7 @@ def retrieve_settings():
         try:
             sett = requests.get(LOCAL_HOST + "/0/getallsettings",
                                 headers={"Authorization": sundail_token},
-                                verify=str(CERT),)
+                                verify=str(CERT_FILE),)
             settings = sett.json()
             cache[SETTINGS_CACHE_KEY] = settings
 
@@ -70,7 +70,7 @@ def check_server_status():
     try:
         response = requests.get(
             LOCAL_HOST + "/0/server_status",
-            verify=str(CERT),
+            verify=str(CERT_FILE),
             timeout=5,
         )
 
