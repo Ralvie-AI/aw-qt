@@ -9,7 +9,7 @@ import requests
 from time import sleep
 from datetime import datetime
 
-from sd_core.log import setup_logging
+from sd_core.log import setup_logging, clear_old_log
 from sd_main.keychain_script import clear_keys
 from sd_main.manager import Manager
 from .config import AwQtSettings
@@ -43,6 +43,9 @@ def main() -> None:
     The main function of the application.
     """
     try:
+
+        #clear old logs
+        threading.Thread(target=clear_old_log).start()
 
         if platform.system() == "Darwin":
             subprocess.call("syslog -s 'sd-main started'", shell=True)
