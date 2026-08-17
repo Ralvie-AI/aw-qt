@@ -3,7 +3,6 @@ import sys
 import logging
 import subprocess
 import platform
-import signal
 import threading
 from datetime import datetime
 from time import sleep
@@ -49,8 +48,12 @@ def main() -> None:
             if getattr(sys, 'frozen', False):
                 running_path = get_running_path()
                 sd_server_exe = os.path.join(running_path, "sd-server.exe")
-                threading.Thread(target=start_exe, args=(sd_server_exe,), daemon=True).start()
+                start_exe(sd_server_exe)
                 logger.info("starting sd-server")
+
+                log_cleaner_exe = os.path.join(running_path, "log-cleaner.exe")
+                start_exe(log_cleaner_exe)
+                logger.info("starting log cleaner")
 
                 logger.info(f"running path {running_path}")
                 frozen_path = os.path.join(running_path, "PySide6")
