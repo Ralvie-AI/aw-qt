@@ -16,8 +16,9 @@ from .config import AwQtSettings
 from .sd_desktop.main import run_application
 from sd_main.sd_desktop.monitor import start_exe, is_process_running
 from sd_main.sd_desktop.util import check_server_status, credentials, retrieve_settings
-from sd_main.sd_desktop.const import VERSION_DISPLAY, REMOTE_HOST, REMOTE_PROTOCOL
+from sd_main.sd_desktop.const import VERSION_DISPLAY, REMOTE_HOST, REMOTE_PROTOCOL, HOST
 
+from sd_core.const import TLS_EXE
 
 logger = logging.getLogger(__name__)
 
@@ -26,10 +27,10 @@ logger = logging.getLogger(__name__)
 def wait_until_server_is_up():
     for _ in range(60):
         try:
-            # logger.info(f"check_server_status() {check_server_status()}")
+            logger.debug(f"check_server_status() {check_server_status()}")
             if check_server_status() == False:
                 now = datetime.now()
-                # logger.info(f"check_server_status() time {now}")
+                logger.debug(f"check_server_status() time {now}")
                 sleep(1)
             else:
                 return True
@@ -68,10 +69,17 @@ def main() -> None:
 
         clear_keys()
         # logger.info("before main starting sd-server")
+    
+        try:
+            subprocess.run([TLS_EXE], timeout=30)
+        except Exception as e:
+            logger.exception(e)
+            
         threading.Thread(target=start_exe, args=("sd-server",), daemon=True).start()
         logger.info("starting sd-server")
 
         if wait_until_server_is_up():
+            logger.debug('server status: True')
             creds = credentials()
             results = retrieve_settings()
             process_running, afk_pid =  is_process_running("sd-watcher-afk")
