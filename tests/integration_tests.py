@@ -29,7 +29,7 @@ def print_section(msg, title="unnamed section"):
 
 
 if __name__ == "__main__":
-    with running_process(["sd-qt", "--testing", "--autostart-modules=none"]) as proc:
+    with running_process(["sd-main", "--testing", "--autostart-modules=none"]) as proc:
         # If it stays alive this long, things are probably fine
         sleep(5)
 

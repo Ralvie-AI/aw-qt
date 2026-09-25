@@ -11,12 +11,12 @@ from time import sleep
 from sd_core.log import setup_logging
 from sd_core.util import get_running_path, start_exe
 from sd_core.os_util import is_windows
-from sd_qt.keychain_script import clear_keys
-# from sd_qt.manager import Manager
+from sd_main.keychain_script import clear_keys
+# from sd_main.manager import Manager
 # from .config import AwQtSettings
-from sd_qt.util import check_server_status
+from sd_main.util import check_server_status
 from .sd_desktop.main import run_application
-from sd_qt.sd_desktop.const import VERSION_DISPLAY
+from sd_main.sd_desktop.const import VERSION_DISPLAY
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def main() -> None:
     The main function of the application.
     """
     try:        
-        setup_logging("sd-qt", log_file=True)
+        setup_logging("sd-main", log_file=True)
         clear_keys()
         if is_windows():
             # if get_window_version() == 10:
@@ -70,12 +70,12 @@ def main() -> None:
             logger.info(f"env => {os.environ}")
 
         if platform.system() == "Darwin":
-            subprocess.call("syslog -s 'sd-qt started'", shell=True)
+            subprocess.call("syslog -s 'sd-main started'", shell=True)
         
-        logger.info("Started sd-qt...")
+        logger.info("Started sd-main...")
 
         if platform.system() == "Darwin":
-            subprocess.call("syslog -s 'sd-qt successfully started logging'", shell=True)
+            subprocess.call("syslog -s 'sd-main successfully started logging'", shell=True)
 
         if sys.platform != "win32":
             try:

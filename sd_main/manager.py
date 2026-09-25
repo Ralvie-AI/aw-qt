@@ -17,10 +17,10 @@ import sd_core
                                    
 logger = logging.getLogger(__name__)
 
-ignored_filenames = ["sd-cli", "sd-client", "sd-qt", "sd-qt.desktop", "sd-qt.spec", "sd-main"]
+ignored_filenames = ["sd-cli", "sd-client", "sd-main", "sd-main.desktop", "sd-main.spec", "sd-main"]
 auto_start_modules = ["sd-server"]
 
-# The path of sd_qt
+# The path of sd_main
 if getattr(sys, 'frozen', False):
     # Running as a PyInstaller bundle
     _module_dir = os.path.dirname(sys.executable)
@@ -28,7 +28,7 @@ else:
     # Running as a script or API
     _module_dir = os.path.dirname(os.path.realpath(__file__))
 
-# The path of the sd-qt executable (when using PyInstaller)
+# The path of the sd-main executable (when using PyInstaller)
 _parent_dir = os.path.abspath(os.path.join(_module_dir, os.pardir))
 
 file_path = get_data_dir("sd-server")
@@ -56,7 +56,7 @@ def filter_modules(modules: Iterable["Module"]) -> Set["Module"]:
      @return The set of modules that are not ignored by this
     """
     # Remove things matching the pattern which is not a module
-    # Like sd-qt itself, or sd-cli
+    # Like sd-main itself, or sd-cli
     return {m for m in modules if m.name not in ignored_filenames}
 
 def is_valid_ini(filepath):
@@ -508,7 +508,7 @@ class Manager:
          
          @return True if at least one module was discovered False otherwise
         """
-        # These should always be bundled with sd-qt
+        # These should always be bundled with sd-main
         modules = set(_discover_modules_bundled())
         modules |= set(_discover_modules_system())
         modules = filter_modules(modules)
@@ -538,7 +538,7 @@ class Manager:
          @return The module that was started or None if it could not be
         """
         # NOTE: Will always prefer a bundled version, if available. This will not affect the
-        #       sd-qt menu since it directly calls the module's start() method.
+        #       sd-main menu since it directly calls the module's start() method.
         bundled = [m for m in self.modules_bundled if m.name == module_name]
         system = [m for m in self.modules_system if m.name == module_name]
         # Start the manager. If bundled or system are not found start the manager.

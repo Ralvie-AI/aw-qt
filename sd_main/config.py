@@ -4,10 +4,10 @@ from sd_core.config import load_config_toml
 
 
 default_config = """
-[sd-qt]
+[sd-main]
 autostart_modules = ["sd-server", "sd-watcher-afk", "sd-watcher-window"]
 
-[sd-qt-testing]
+[sd-main-testing]
 autostart_modules = ["sd-server", "sd-watcher-afk", "sd-watcher-window"]
 """.strip()
 
@@ -19,7 +19,7 @@ class AwQtSettings:
          
          @param testing - Whether or not we are
         """
-        config = load_config_toml("sd-qt", default_config)
-        config_section: Any = config["sd-qt"]
+        config = load_config_toml("sd-main", default_config)
+        config_section: Any = config["sd-main"]
 
         self.autostart_modules: List[str] = config_section["autostart_modules"]

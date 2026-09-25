@@ -1,7 +1,7 @@
 __pycache__
 *.swp
 *.egg-info
-sd_qt/resources.py
+sd_main/resources.py
 dist
 build
 .mypy_cache

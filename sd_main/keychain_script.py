@@ -3,7 +3,7 @@ from sd_core.dirs import get_data_dir
 from sd_core.cache import delete_password, credentials
 from sd_core.const import CACHE_KEY
 
-file_path = get_data_dir("sd-qt")
+file_path = get_data_dir("sd-main")
 config_file_path = os.path.join(file_path, "deletion_done.txt")
 
 
