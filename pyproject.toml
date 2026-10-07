@@ -24,13 +24,13 @@ click = "*"
 importlib-metadata = {version = "*", python = "<3.10"}
 
 # provides pkg_resources, needed for pyinstaller for some reason
-setuptools = "*"
+setuptools = "68.2.2"
 
 [tool.poetry.dev-dependencies]
 mypy = "*"
 # PyQt6-stubs = { git = "https://github.com/TilmanK/PyQt6-stubs", rev = "main" }
 flake8 = "*"
-pyinstaller = ">=5.1"
+pyinstaller = "5.13.2"
 types-click = "*"
 psutil="*"
 
