@@ -9,61 +9,71 @@ import platform
 import os
 import sys
 
-
 extra_pathex = []
 
 icon = 'media/logo/logo.ico'
 block_cipher = None
 
 
-a = Analysis(['sd_main/__main__.py'],
-             pathex=[] + extra_pathex,
-             binaries=None,
-             datas=[('resources/sd-main.desktop', '.'), ('media', 'media'),("sd_main/sd_desktop/resources",'sd_desktop/resources'),
-             ("sd_main/sd_desktop/locales",'sd_desktop/locales'),
-             ("sd_main/sd_desktop/LICENSES",'LICENSES'),
-             ("sd_main/sd_desktop/README.md",'.'),
-             ],
-             hiddenimports=[],
-             hookspath=[],
-             runtime_hooks=[],
-             excludes=['PyQt6'],
-             win_no_prefer_redirects=False,
-             win_private_assemblies=False,
-             cipher=block_cipher)
+a = Analysis(
+   ['sd_main/__main__.py'],
+   pathex=[] + extra_pathex,
+   binaries=None,
+   datas=[
+      ('resources/sd-main.desktop', '.'), 
+      ('media', 'media'),
+      ("sd_main/sd_desktop/resources",'sd_desktop/resources'),
+      ("sd_main/sd_desktop/locales",'sd_desktop/locales'),
+      ("sd_main/sd_desktop/LICENSES",'LICENSES'),
+      ("sd_main/sd_desktop/README.md",'.'),
+   ],
+   hiddenimports=[],
+   hookspath=[],
+   runtime_hooks=[],
+   excludes=['PyQt6'],
+   win_no_prefer_redirects=False,
+   win_private_assemblies=False,
+   cipher=block_cipher
+)
 
 # Needed to be removed due to https://github.com/ActivityWatch/activitywatch/issues/607#issuecomment-862187836
 exclude_libs = ["libfontconfig", "libfreetype"]
 a.binaries = [bin for bin in a.binaries if not any(bin[0].find(lib) >= 0 for lib in exclude_libs)]
 
-pyz = PYZ(a.pure, a.zipped_data,
-             cipher=block_cipher)
-exe = EXE(pyz,
-          a.scripts,
-          exclude_binaries=True,
-          name='sd-main',
-          contents_directory=".",
-          debug=False,
-          strip=False,
-          upx=True,
-          icon=icon,
-          console=False if platform.system() == "Windows" else True,
-          upx_exclude=[
-             '_uuid.pyd',
-            'vcruntime140.dll',
-            'ucrtbase.dll',
-            'python3.dll',
-            'python311.dll',
-         ],
-          )
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas,
-               strip=False,
-               upx=True,
-               name='sd-main')
+pyz = PYZ(
+   a.pure, 
+   a.zipped_data,
+   cipher=block_cipher
+)
 
+exe = EXE(
+   pyz,
+   a.scripts,
+   exclude_binaries=True,
+   name='sd-main',
+   contents_directory=".",
+   debug=False,
+   strip=False,
+   upx=True,
+   icon=icon,
+   console=False if platform.system() == "Windows" else True,
+   upx_exclude=[
+      '_uuid.pyd',
+   'vcruntime140.dll',
+   'ucrtbase.dll',
+   'python3.dll',
+   'python311.dll',
+   ],
+)
+coll = COLLECT(
+   exe,
+   a.binaries,
+   a.zipfiles,
+   a.datas,
+   strip=False,
+   upx=True,
+   name='sd-main'
+)
 
 # Build a .app for macOS
 # This would probably be done best by also bundling sd-server, sd-watcher-afk and
@@ -71,6 +81,8 @@ coll = COLLECT(exe,
 #
 # NOTE: Untested, remove the False to test
 if False and platform.system() == "Darwin":
-    app = BUNDLE(exe,
-                 name="Sundial.app",
-                 icon=None)  # TODO: Should this be icon=icon?
+    app = BUNDLE(
+      exe,
+      name="Sundial.app",
+      icon=None
+)  # TODO: Should this be icon=icon?
